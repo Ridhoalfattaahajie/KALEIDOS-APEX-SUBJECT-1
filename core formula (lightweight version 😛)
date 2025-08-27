@@ -1,0 +1,70 @@
+"""
+Lightweight Version Notice
+--------------------------
+This is the **Lightweight Implementation** of the
+Formula Probabilistik Adaptif-Deterministik EPR 
+(Apex-Elite V10.21).
+
+⚠️ DISCLAIMER:
+- This version is **simplified** and does not contain 
+  full logic, parameters, or optimizations of the 
+  original formula.
+- It is provided for **demonstration, testing, and 
+  non-commercial reference only**.
+- The full version remains proprietary and protected.
+
+License
+-------
+Copyright 2025 Ridhoalfattaahajie
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+import numpy as np
+
+# Simulated lightweight state
+class State:
+    def __init__(self):
+        self.prev_drift = 0.0
+        self.hist_mean = 0.0
+        self.hist_std = 1.0
+
+state = State()
+
+# Simplified drift calculation (lightweight)
+def compute_ewma_drift(ece, brier, conformal, alpha=0.1):
+    return alpha * (ece + brier + (1 - conformal)) + (1 - alpha) * state.prev_drift
+
+# Simplified OOD shift detector
+def ood_feature_shift(features):
+    return np.linalg.norm(features - state.hist_mean) / (state.hist_std + 1e-8) * 100
+
+# Lightweight calibration mockup
+def calibrate_stream(ece, brier, conformal, features):
+    drift = compute_ewma_drift(ece, brier, conformal)
+    shift = ood_feature_shift(features)
+    
+    diagnostics = {
+        "ewma_drift": drift,
+        "ood_shift": shift,
+        "cal_conf": max(0.0, 1 - (drift + shift/100))
+    }
+    return diagnostics
+
+# Example run (mock input)
+if __name__ == "__main__":
+    diagnostics = calibrate_stream(
+        ece=0.02, brier=0.01, conformal=0.95,
+        features=np.array([0.5, 0.6, 0.4])
+    )
+    print("Lightweight Diagnostics:", diagnostics)
